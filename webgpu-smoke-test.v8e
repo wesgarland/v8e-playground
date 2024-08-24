@@ -1,0 +1,36 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+/**
+ * @file      webgpu-test.v8e - Basic webgpu functionality tests. Runs on the bare-metal dcp-evaluator
+ *                              for v8 + webgpu
+ * @author    Wes Garland
+ * @date      Aug 2024
+ */
+'use strict';
+
+async function main()
+{
+  if (globalThis.navigator && globalThis.navigator?.gpu)
+    console.log("Your evaluator has WebGPU support");
+  else
+    console.log("Your evaluator does not have WebGPU support");
+
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter)
+    throw Error("Couldn't request WebGPU adapter.");
+  if (adapter.isFallbackAdapter)
+    console.log('This is a fallback adapter');
+  const device = await adapter.requestDevice();
+  if (!device)
+    throw Error("Couldn't request device from WebGPU adapter");
+  device.lost.then(() => console.error('device lost', device));
+
+  console.log('\nYour GPU Adapter supports the following features:');
+  adapter.features.keys().forEach(key => {
+    console.log(' -', key);
+  });
+
+  console.log('\nYour GPU Adapter has the following limits:');
+  for (prop in adapter.limits)
+    console.log(prop + ':', '\t' + adapter.limits[prop]);
+}
+

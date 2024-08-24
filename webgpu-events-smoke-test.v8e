@@ -1,0 +1,21 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+/**
+ * @file      webgpu-events-smoke-test.v8e - tries to add an event listener on device. Known to fail /wg aug 2024
+ * @author    Wes Garland
+ * @date      Aug 2024
+ */
+'use strict';
+
+async function main()
+{
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter)
+    throw Error("Couldn't request WebGPU adapter.");
+  const device = await adapter.requestDevice();
+  if (!device)
+    throw Error("Couldn't request device from WebGPU adapter");
+  device.lost.then(() => console.error('device lost', device));
+  device.addEventListener("uncapturederror", (event) => console.error("A WebGPU error was not captured:", event.error.message));
+  console.log('added event without error');
+}
+

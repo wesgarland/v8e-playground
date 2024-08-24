@@ -1,0 +1,9 @@
+#! /bin/env -S /opt/dcp/bin/dcp-evaluator  -f lib/rt.v8e -f lib/console.v8e
+'use strict';
+
+function main()
+{
+  console.log('dcp-evalulator is working properly.');
+}
+
+globalThis.main = main;

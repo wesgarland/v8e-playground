@@ -1,0 +1,23 @@
+# editor temp files
+*~
+.#*
+\#*#
+*.swp
+*.swo
+
+# macOS filesystem
+.DS_Store
+
+# VS Code files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# Cache files.
+.cache/

@@ -1,0 +1,20 @@
+#! /bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.v8e
+'use strict';
+
+writeln("\n*** WebGPU Test Program\n");
+try
+{
+  if (globalThis.navigator && globalThis.navigator?.gpu)
+    writeln("Your evaluator has WebGPU");
+  else
+    writeln("Your evaluator does not have WebGPU");
+  writeln('normal exit');
+}
+catch(error)
+{
+  writeln(error.stack)
+}
+finally
+{
+  quit()
+}

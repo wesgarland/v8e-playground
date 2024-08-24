@@ -1,0 +1,9 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator -f lib/rt.js
+'use strict';
+
+function main()
+{
+  writeln('v8e runtime is working properly.');
+}
+
+globalThis.main = main;
