@@ -27,7 +27,7 @@ globalThis.nextTimer = (when) => {
 globalThis.die = () => process.exit(0);
 
 /* Implement writeln() */
-globalThis.writeln = (string) => console.log(String(string));
+globalThis.writeln = (string) => process.stdout.write(`${string}\n`);
 
 /* implement onreadln */
 globalThis.onreadln = (callback) => {
