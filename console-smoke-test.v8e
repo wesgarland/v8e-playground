@@ -1,0 +1,7 @@
+#! /bin/env -S /opt/dcp/bin/dcp-evaluator  -f lib/rt.js -f lib/console.js
+'use strict';
+
+globalThis.main = function main()
+{
+  console.log('console.log is working properly.');
+}
