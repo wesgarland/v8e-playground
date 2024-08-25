@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js
 /**
  * @file      webgpu-events-smoke-test.v8e - tries to add an event listener on device. Known to fail /wg aug 2024
  * @author    Wes Garland
@@ -6,16 +6,42 @@
  */
 'use strict';
 
+var userlandEventTarget = false;
+
+if (!globalThis.EventTarget)
+{
+  userlandEventTarget = true;
+  globalThis.EventTarget = EventTarget;
+  function EventTarget()
+  {
+    console.log('instanciated userland EventTarget', arguments);
+  }
+
+  EventTarget.prototype.addEventListener = function()
+  {
+    console.log('called userland EventTarget::addEventListener', Array.from(arguments));
+  }
+}
+
 async function main()
 {
+  console.log('\nusing userland EventTarget:', userlandEventTarget);
+  console.log('GPUDevice is', GPUDevice);
+  console.log('GPUDevice prototype is', GPUDevice.prototype);
+
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter)
     throw Error("Couldn't request WebGPU adapter.");
+
   const device = await adapter.requestDevice();
   if (!device)
     throw Error("Couldn't request device from WebGPU adapter");
   device.lost.then(() => console.error('device lost', device));
+
+  test('device is an instanceof EventTarget', device instanceof EventTarget, true);
+  test('device is an instanceof GPUDevice',   device instanceof GPUDevice,   true);
+  test('device constructor is GPUDevice',     device.constructor, GPUDevice);
+
   device.addEventListener("uncapturederror", (event) => console.error("A WebGPU error was not captured:", event.error.message));
   console.log('added event without error');
 }
-
