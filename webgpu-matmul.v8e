@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/webgpu-requirements.js
 /**
  * @file        webgpu-matmul.v8e.js - Simple webGPU matmul operation to run on
  *                                     bare-metal dcp-evaluator
@@ -230,4 +230,6 @@ globalThis.main = async function main()
   console.log('benchmark run, cleaning up');
   cleanup();
   console.log('done');
+  die();
 }
+main()
