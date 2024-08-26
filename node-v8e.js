@@ -11,6 +11,13 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
 
+delete globalThis.setTimeout;
+delete globalThis.clearTimeout;
+delete globalThis.setInterval;
+delete globalThis.clearInterval;
+delete globalThis.setImmediate;
+delete globalThis.clearImmediate;
+
 /* Implement ontimer() */
 globalThis.ontimer = (callback) => {
   globalThis.ontimer.callback = callback;
@@ -20,7 +27,7 @@ globalThis.ontimer = (callback) => {
 globalThis.nextTimer = (when) => {
   if (!(when >= 1))
     console.warn('Warning: timer might not fire with dcp-evaluator-v8; when is', when, 'but should be a number >= 1');
-  setTimeout(() => globalThis.ontimer.callback(), when);
+  require('timers').setTimeout(() => globalThis.ontimer.callback(), when);
 }
 
 /* Implement die() */
