@@ -23,7 +23,7 @@ if (!globalThis.EventTarget)
   }
 }
 
-async function main()
+globalThis.main = async function main()
 {
   console.log('\nusing userland EventTarget:', userlandEventTarget);
   console.log('GPUDevice is', GPUDevice);

@@ -7,7 +7,7 @@
  */
 'use strict';
 
-async function main()
+globalThis.main = async function main()
 {
   if (globalThis.navigator && globalThis.navigator?.gpu)
     console.log("Your evaluator has WebGPU support");

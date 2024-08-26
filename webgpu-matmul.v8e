@@ -9,7 +9,7 @@
  * Adapted from Amir's matmul benchmark to work on the bare-metal dcp-evaluator
  */
 
-async function main()
+globalThis.main = async function main()
 {
   const BLOCK_SIZE_X = 16;
   const BLOCK_SIZE_Y = 16;

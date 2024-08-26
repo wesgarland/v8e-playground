@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js -f lib/strict-mode-test.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator -f lib/console.js -f lib/rt.js -f lib/test.js -f lib/strict-mode-test.js
 /**
  * @file      strict-mode-test.v8e - validates that evaluator files are evaluated in strict mode,
  *                                   even without 'use 'strict'
