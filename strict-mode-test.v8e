@@ -1,0 +1,18 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js -f lib/strict-mode-test.js
+/**
+ * @file      strict-mode-test.v8e - validates that evaluator files are evaluated in strict mode,
+ *                                   even without 'use 'strict'
+ * @author    Wes Garland
+ * @date      Aug 2024
+ */
+function mutator(abc)
+{
+  arguments[0] = 123;
+  return abc;
+}
+
+globalThis.main = async function main()
+{
+  test('program file has been evaluated in non-strict mode', mutator(456), 123);
+  test('strict-mode library file has been evaluated in strict mode', mutator_strict(456), 456);
+}
