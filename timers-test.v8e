@@ -23,7 +23,8 @@ function fire(num)
 
 globalThis.main = function main()
 {
-  a=setInterval(fire, 100, 1);
-  b=setInterval(fire, 200, 2);
-  setTimeout(fire, 500, 3);
+  setImmediate(() => console.log('hello world'));
+  a=setInterval(fire, 1000, 1);
+  b=setInterval(fire, 2000, 2);
+  setTimeout(fire, 5000, 3);
 }

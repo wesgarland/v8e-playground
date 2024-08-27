@@ -8,8 +8,8 @@
  * @date     Aug 2024
  */
 'use strict';
-const fs = require('node:fs');
-const vm = require('node:vm');
+const fs = require('fs');
+const vm = require('vm');
 
 delete globalThis.setTimeout;
 delete globalThis.clearTimeout;
@@ -24,10 +24,20 @@ globalThis.ontimer = (callback) => {
 }
 
 /* Implement nextTimer() */
-globalThis.nextTimer = (when) => {
-  if (!(when >= 1))
-    console.warn('Warning: timer might not fire with dcp-evaluator-v8; when is', when, 'but should be a number >= 1');
-  require('timers').setTimeout(() => globalThis.ontimer.callback(), when);
+globalThis.nextTimer = function nextTimer(when)
+{
+  const nodeTimers = require('timers');
+
+  nodeTimers.clearTimeout(nextTimer.hnd);
+  nodeTimers.clearImmediate(nextTimer.hnd);
+  if (when === 0)
+    return;
+
+  const interval = when - Date.now();
+  if (!interval || interval <= 0)
+    nextTimer.hnd = nodeTimers.setImmediate(globalThis.ontimer.callback);
+  else
+    nextTimer.hnd = nodeTimers.setTimeout(globalThis.ontimer.callback, interval);
 }
 
 /* Implement die() */
@@ -40,7 +50,11 @@ globalThis.writeln = (string) => process.stdout.write(`${string}\n`);
 globalThis.onreadln = (callback) => {
   globalThis.onreadln.callback = callback;
 };
-const readline = require('node:readline');
+globalThis.onreadln.callback = function defaultReadlnCallback() {
+  /* throw new Error('onreadln callback not specified'); */
+  return;
+};
+const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
   crlfDelay: Infinity,
