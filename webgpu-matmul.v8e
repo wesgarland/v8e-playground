@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/timers.js
 /**
  * @file        webgpu-matmul.v8e.js - Simple webGPU matmul operation to run on
  *                                     bare-metal dcp-evaluator
@@ -30,29 +30,27 @@ globalThis.main = async function main()
   let resultMatrixBuffer;
   let gpuReadBuffer;
 
-  async function initializeWebGPU() {
-    if (!('gpu' in navigator)) {
-      console.log(
-          'WebGPU is not supported. Enable chrome://flags/#enable-unsafe-webgpu flag.');
-      return;
-    }
+  async function initializeWebGPU()
+  {
+    if (!navigator.gpu)
+      throw new Error('This evaluator does not support WebGPU');
 
     adapter = await navigator.gpu.requestAdapter();
-    if (!adapter) {
+    if (!adapter)
+    {
       console.log('Failed to get GPU adapter.');
       return;
     }
 
-    device = await adapter.requestDevice({requiredFeatures: []});
+    device = await adapter.requestDevice({ requiredFeatures: [] });
     return true;
   }
 
-  async function getAdapterInfo() {
-    const adapterInfo = await (
-        adapter.requestAdapterInfo ? adapter.requestAdapterInfo() : undefined);
-    if (adapterInfo === undefined) {
+  async function getAdapterInfo()
+  {
+    const adapterInfo = await (adapter.requestAdapterInfo ? adapter.requestAdapterInfo() : undefined);
+    if (adapterInfo === undefined)
       return 'Warning: cannot get adapterInfo';
-    }
 
     const packedAdapterInfo =
         `IsCompatibilityMode: ${adapter.isCompatibilityMode}\n` +
@@ -65,7 +63,8 @@ globalThis.main = async function main()
     return packedAdapterInfo;
   }
 
-  async function initDeviceData(matrix_width) {
+  async function initDeviceData(matrix_width)
+  {
     // Matrices are like as follows:
     // [rows, columns, (values)]);
     matrixWidth = matrix_width;
@@ -75,9 +74,8 @@ globalThis.main = async function main()
     firstMatrix[0] = matrixWidth;
     firstMatrix[1] = matrixWidth;
 
-    for (let i = 2; i < matrixWidth * matrixWidth + 2; i++) {
+    for (let i = 2; i < matrixWidth * matrixWidth + 2; i++)
       firstMatrix[i] = 1;
-    }
 
     gpuBufferFirstMatrix = device.createBuffer({
       mappedAtCreation: true,
@@ -89,14 +87,12 @@ globalThis.main = async function main()
     new Float32Array(arrayBufferFirstMatrix).set(firstMatrix);
     gpuBufferFirstMatrix.unmap();
 
-
     secondMatrix = new Float32Array((matrixWidth * matrixWidth) + 2);
     secondMatrix[0] = matrixWidth;
     secondMatrix[1] = matrixWidth;
 
-    for (let i = 2; i < matrixWidth * matrixWidth + 2; i++) {
+    for (let i = 2; i < matrixWidth * matrixWidth + 2; i++)
       secondMatrix[i] = 1;
-    }
 
     gpuBufferSecondMatrix = device.createBuffer({
       mappedAtCreation: true,
@@ -109,8 +105,7 @@ globalThis.main = async function main()
 
 
     // Result Matrix
-    resultMatrixBufferSize =
-        Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix[0] * secondMatrix[1]);
+    resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix[0] * secondMatrix[1]);
     resultMatrixBuffer = device.createBuffer({
       size: resultMatrixBufferSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
@@ -127,7 +122,6 @@ globalThis.main = async function main()
     // Compute shader code
     const shaderModule = device.createShaderModule({
       code: `
-
         const BLOCK_SIZE_X = 16;
         const BLOCK_SIZE_Y = 16;
 
