@@ -1,0 +1,23 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js
+/**
+ * @file      webgpu-events-smoke-test.v8e - tries to add an event listener on device. Known to fail /wg aug 2024
+ * @author    Wes Garland
+ * @date      Aug 2024
+ */
+'use strict';
+
+
+for (prop in navigator.gpu) console.log(prop)
+
+globalThis.main = async function main()
+{
+  const props = [];
+
+  for (prop in navigator.gpu)
+    props.push(prop);
+
+  test('navigator.gpu has requestAdapter method', typeof navigator.gpu.requestAdapter, 'function');
+  test('navigator.gpu has enumerable props',      props.length > 0);
+  test('enumerable props include requestAdapter', props.includes('requestAdapter'));
+  console.log('Done.');
+}
