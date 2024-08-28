@@ -1,0 +1,72 @@
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+/**
+ * @file      webgpu-test.v8e - Basic webgpu functionality tests. Runs on the bare-metal dcp-evaluator
+ *                              for v8 + webgpu
+ * @author    Wes Garland
+ * @date      Aug 2024
+ */
+'use strict';
+
+async function getAdapter(powerPreference)
+{
+  const adapter = await navigator.gpu.requestAdapter({ powerPreference });
+  if (!adapter)
+    throw Error(`Couldn't request WebGPU ${powerPreference} adapter`);
+  if (adapter.isFallbackAdapter)
+    console.log(`The ${powerPreference} adapter is a fallback adapter`);
+  const device = await adapter.requestDevice();
+  if (!device)
+    throw Error(`Couldn't request device from ${powerPreference} WebGPU adapter`);
+  device.lost.then(() => console.error(`${powerPreference} device lost`, device));
+  return adapter;
+}
+
+async function summarizeAdapter(powerPreference, adapter)
+{
+  if (typeof adapter.requestAdapterInfo !== 'function')
+    console.log('Your WebGPU implementation does not support GPUAdapter::requestAdapterInfo()')
+  else
+  {
+    console.log(`Your ${powerPreference} adapter has the following info:`);
+    const adapterInfo = await adapter.requestAdapterInfo();
+    for (key in adapterInfo)
+      console.log(key + ':', adapterInfo[key]);
+  }
+  
+  console.log(`\nYour GPU ${powerPreference} Adapter supports the following features:`);
+  adapter.features.keys().forEach(key => {
+    console.log(' -', key);
+  });
+
+  console.log(`\nYour ${powerPreference} GPU Adapter has the following limits:`);
+  for (prop in adapter.limits)
+    console.log(prop + ':', '\t' + adapter.limits[prop]);
+}
+
+globalThis.main = async function main()
+{
+  const hpAdapter = await getAdapter('high-performance');
+  summarizeAdapter('high-power', hpAdapter);
+  const lpAdapter = await getAdapter('low-power');
+  
+  if (lpAdapter === hpAdapter)
+  {
+    console.log('both low and high powered device requests returned the same object');
+    return;
+  }
+
+  if (lpAdapter.requestAdapterInfo)
+  {
+    const lpDeviceId = (await lpAdapter.requestAdapterInfo()).device;
+    const hpDeviceId = (await hpAdapter.requestAdapterInfo()).device;
+
+    if (lpDeviceId && lpDeviceId === hpDeviceId)
+    {      
+      console.log('high-powered and low-powered adapters have the same device name:', hpDeviceId);
+      return;
+    }
+  }
+
+  summarizeAdapter('low-power', lpAdapter);
+}
+

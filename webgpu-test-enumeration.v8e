@@ -6,18 +6,26 @@
  */
 'use strict';
 
-
-for (prop in navigator.gpu) console.log(prop)
-
 globalThis.main = async function main()
 {
-  const props = [];
+  const gprops = [];
+  const nprops = [];
 
-  for (prop in navigator.gpu)
-    props.push(prop);
+  for (let prop in navigator)
+    nprops.push(prop);
+  for (let prop in navigator.gpu)
+    gprops.push(prop);
 
+  test('navigator has enumerable gpu prop',       nprops.includes('gpu'));
   test('navigator.gpu has requestAdapter method', typeof navigator.gpu.requestAdapter, 'function');
-  test('navigator.gpu has enumerable props',      props.length > 0);
-  test('enumerable props include requestAdapter', props.includes('requestAdapter'));
+  test('navigator.gpu has enumerable props',      gprops.length > 0);
+  test('enumerable props include requestAdapter', gprops.includes('requestAdapter'));
+
+  const clobber = {};
+  navigator.gpu = clobber;
+  test('navigator.gpu can be clobbered',          navigator.gpu === clobber);
+  test('navigator has gpu on ctor prototype',     navigator.constructor.prototype.hasOwnProperty('gpu'));
+  test('navigator.gpu is an instanceof GPU',      navigator.gpu instanceof GPU);
+
   console.log('Done.');
 }
