@@ -11,6 +11,10 @@
 
 globalThis.main = async function main()
 {
+  // dcp-native > 7.2.0 lazy loads webgpu
+  if (typeof initWebGPU === 'function')
+    await initWebGPU();  
+
   const BLOCK_SIZE_X = 16;
   const BLOCK_SIZE_Y = 16;
 

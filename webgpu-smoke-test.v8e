@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/timers.js
 /**
  * @file      webgpu-test.v8e - Basic webgpu functionality tests. Runs on the bare-metal dcp-evaluator
  *                              for v8 + webgpu
@@ -9,6 +9,10 @@
 
 globalThis.main = async function main()
 {
+  // dcp-native > 7.2.0 lazy loads webgpu
+  if (typeof initWebGPU === 'function')
+    await initWebGPU();
+
   if (globalThis.navigator && globalThis.navigator?.gpu)
     console.log("Your evaluator has WebGPU support");
   else
