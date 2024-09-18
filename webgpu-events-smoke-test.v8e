@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/test.js -f lib/timers.js
 /**
  * @file      webgpu-events-smoke-test.v8e - tries to add an event listener on device. Known to fail /wg aug 2024
  * @author    Wes Garland
@@ -25,6 +25,10 @@ if (!globalThis.EventTarget)
 
 globalThis.main = async function main()
 {
+  // dcp-native > 7.2.0 lazy loads webgpu
+  if (typeof initWebGPU === 'function')
+    await initWebGPU();
+
   console.log('\nusing userland EventTarget:', userlandEventTarget);
   console.log('GPUDevice is', GPUDevice);
   console.log('GPUDevice prototype is', GPUDevice.prototype);
