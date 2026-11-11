@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/timers.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/events.js -f lib/timers.js
 /**
  * @file      webgpu-test.v8e - Basic webgpu functionality tests. Runs on the bare-metal dcp-evaluator
  *                              for v8 + webgpu

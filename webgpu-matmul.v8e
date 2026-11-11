@@ -1,4 +1,4 @@
-#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/timers.js
+#! /usr/bin/env -S /opt/dcp/bin/dcp-evaluator --webgpu -f lib/console.js -f lib/rt.js -f lib/events.js -f lib/timers.js
 /**
  * @file        webgpu-matmul.v8e.js - Simple webGPU matmul operation to run on
  *                                     bare-metal dcp-evaluator
