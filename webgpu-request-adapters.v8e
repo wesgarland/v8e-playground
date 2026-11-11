@@ -29,7 +29,7 @@ async function summarizeAdapter(powerPreference, adapter)
   {
     console.log(`Your ${powerPreference} adapter has the following info:`);
     const adapterInfo = await adapter.requestAdapterInfo();
-    for (key in adapterInfo)
+    for (let key in adapterInfo)
       console.log(key + ':', adapterInfo[key]);
   }
   
@@ -39,7 +39,7 @@ async function summarizeAdapter(powerPreference, adapter)
   });
 
   console.log(`\nYour ${powerPreference} GPU Adapter has the following limits:`);
-  for (prop in adapter.limits)
+  for (let prop in adapter.limits)
     console.log(prop + ':', '\t' + adapter.limits[prop]);
 }
 
